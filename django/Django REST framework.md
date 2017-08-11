@@ -138,5 +138,5 @@ urlpatterns = [
 </html>
 ```
 效果如下：
-![Alt text](.pics/1502441831028.png)
-![Alt text](.pics/1502441859567.png)
+![Alt text](pics/1502441831028.png)
+![Alt text](pics/1502441859567.png)
