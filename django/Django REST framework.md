@@ -6,6 +6,10 @@ find . -name '*.py' | xargs wc -l
 ---
 time: 2017-08-11
 ### 关于html和form
+创建应用
+```bash
+python manage.py startapp album
+```
 创建模型
 ```python
 from django.db import models
@@ -21,7 +25,7 @@ class Album(models.Model):
     class Meta:
         ordering = ('pub_time', )
 ```
-创建模型的`serializer`类
+在album应用下创建`serializers.py`文件，创建模型的`serializer`类
 ```python
 from rest_framework import serializers
 from album.models import Album
@@ -38,7 +42,7 @@ class AlbumSerializer(serializers.ModelSerializer):
 python manage.py makemigrations
 python manage.py migrate
 ```
-定义视图类，主要用到了`APIView`
+在`views.py`中定义视图类，主要用到了`APIView`
 ```python
 from django.shortcuts import get_object_or_404, redirect
 from album.models import Album
