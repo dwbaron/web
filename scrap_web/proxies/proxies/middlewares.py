@@ -4,23 +4,17 @@
 #
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
-<<<<<<< HEAD
-
-from scrapy import signals
-=======
 import json
 import random
 
-from multiprocessing import Process, Queue
-
 import requests
 from scrapy import signals
-from scrapy.downloadermiddlewares.httpproxy import HttpProxyMiddleware
+from scrapy.downloadermiddlewares.httpproxy import HttpProxyMiddleware  # 代理ip，这是固定的导入
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
->>>>>>> 2c1067c4c308529d19cd5b6c073eb20a5a2c04ff
+from multiprocessing import Process, Queue
 
 
-class TencentSpiderMiddleware(object):
+class ProxiesSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
@@ -66,11 +60,23 @@ class TencentSpiderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
-<<<<<<< HEAD
-=======
+
+
+# 响应头
+class MyAgent(UserAgentMiddleware):
+
+    def __init__(self,user_agent=''):
+        self.user_agent = user_agent
+
+    def process_request(self,request,spider):
+        request.headers.setdefault('User-Agent', 'Mozilla/5.0 '
+                                                 '(X11; Linux x86_64) '
+                                                 'AppleWebKit/537.36 (KHTML, like Gecko) '
+                                                 'Ubuntu Chromium/53.0.2785.143 Chrome/53.0.2785.143 Safari/537.36')
 
 
 class IPPOOLS(HttpProxyMiddleware):
+
     def __init__(self, ip=''):
         self.ip = ip
         self.ippools = self.get_ippool()
@@ -91,7 +97,7 @@ class IPPOOLS(HttpProxyMiddleware):
         pass
 
     # 获代理ip程池, 默认30条
-    def get_ippool(self, n=80):
+    def get_ippool(self, n=30):
         res = []
         with open(r'D:\workspace\web_scrap\proxies\proxies\proxies.json', 'r', encoding='gbk') as f:
             for i in range(n):
@@ -134,7 +140,7 @@ class IPPOOLS(HttpProxyMiddleware):
             if proxy == 0:
                 break
             try:
-                if requests.get('http://hr.tencent.com/position_detail.php?id=31067&keywords=&tid=0&lid=0', proxies=proxy, timeout=5).status_code == 200:
+                if requests.get('http://www.baidu.com', proxies=proxy, timeout=2).status_code == 200:
                     print('success %s' % proxy)
                     new_queue.put(proxy)
             except:
@@ -156,7 +162,8 @@ class UAPOOLS(UserAgentMiddleware):
             pass
 
     user_agent_pools = [
+        'Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3',
+        'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3',
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
         'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
     ]
->>>>>>> 2c1067c4c308529d19cd5b6c073eb20a5a2c04ff

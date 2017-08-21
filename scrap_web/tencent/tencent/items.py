@@ -4,6 +4,10 @@
 #
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2c1067c4c308529d19cd5b6c073eb20a5a2c04ff
 import scrapy
 
 

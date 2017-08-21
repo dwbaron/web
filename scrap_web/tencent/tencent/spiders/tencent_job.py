@@ -47,7 +47,14 @@ class TencentJobSpider(scrapy.Spider):
             detail_url = base_url + cur_url
             yield scrapy.Request(detail_url, meta={'item': item}, callback=self.parse_detail)
 
+<<<<<<< HEAD
         # # 获取下一页url
         # next_url = base_url + response.xpath('//a[@id="next"]/@href').extract_first()
         # # 创建新请求，并返回且引擎
         # yield scrapy.Request(next_url, callback=self.parse)
+=======
+        # 获取下一页url
+        next_url = base_url + response.xpath('//a[@id="next"]/@href').extract_first()
+        # 创建新请求，并返回且引擎
+        yield scrapy.Request(next_url, callback=self.parse)
+>>>>>>> 2c1067c4c308529d19cd5b6c073eb20a5a2c04ff
