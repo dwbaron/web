@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block jsp %}
+
+<script>
+
+    $(function () {
+
+//        // 点击之后增加阅读量
+//        $('.entry-title a').click(function () {
+//
+//            var url = $(this).attr('href');
+//            $.ajax({
+//                url: url,
+//                type: 'GET',
+//                data: {'data': 'click'},
+//                dataType: 'json',
+//                async: false,
+//                success: function () {
+//
+//                }
+//
+//            })
+//        })
+    })
+
+</script>
+
+{% endblock jsp %}
+
+
+{% block main %}
+{% for post in post_list %}
+<article class="post post-{{ post.pk }}">
+    <h1 class="entry-title">
+        <a href="{{ post.get_absolute_url}}">{{ post.title }}</a>
+    </h1>
+    <div class="entry-meta">
+        <span class="post-category"><a href="#">类别: {{ post.category.name }}</a></span>
+        <span class="post-date"><a href="#"><time class="entry-date"
+                                                  datetime="{{ post.created_time }}">{{ post.created_time.year }}-
+            {{ post.created_time.month }}-{{ post.created_time.day }}</time></a></span>
+        <span class="post-author"><a href="#">author: {{ post.author }}</a></span>
+        <span class="comments-link"><a href="#">评论: {{ post.comments }}</a></span>
+        <span class="views-count"><a href="#">阅读: {{ post.view_counts }}</a></span>
+    </div>
+
+    <div class="entry-content clearfix">
+        <p style="font-size: 1em">{{ post.body|safe|truncatechars:54}} ... </p>
+        <div class="read-more cl-effect-14">
+            <a href="{{ post.get_absolute_url}}" class="more-link">read more <span class="meta-nav">...</span></a>
+        </div>
+    </div>
+    <hr style="height:2px;border:none;border-top:1px dotted #0e84b5;">
+
+</article>
+{% empty %}
+<div class="no-post">暂时还没有发布的文章！</div>
+{% endfor %}
+
+<!-- 简单分页效果
+<div class="pagination-simple">
+    <a href="#">上一页</a>
+    <span class="current">第 6 页 / 共 11 页</span>
+    <a href="#">下一页</a>
+</div>
+-->
+<!--<div class="pagination">-->
+                    <!--{% if post_list.has_previous %}-->
+                        <!--<a href="/home/?pindex={{ post_list.number|add:-1 }}">&lt;上一页</a>-->
+                    <!--{% endif %}-->
+                    <!--{% for pindex in pages %}-->
+                        <!--{% if pindex == post_list.number %}-->
+                            <!--<a href="/home/?pindex={{ pindex }}" class="current" style="color:red">{{ pindex }}</a>-->
+                        <!--{% else %}-->
+                            <!--<a href="/home/?pindex={{ pindex }}">{{ pindex }}</a>-->
+                        <!--{% endif %}-->
+                    <!--{% endfor %}-->
+                    <!--{% if post_list.has_next %}-->
+                        <!--<a href="/home/?pindex={{ post_list.number|add:1 }}">下一页&gt;</a>-->
+                    <!--{% endif %}-->
+                <!--</div>-->
+{% if is_paginated %}
+<ul class="pagination">
+  {% if first %}
+    <li><a href="?page=1">1</a></li>li>
+  {% endif %}
+  {% if left %}
+    {% if left_has_more %}
+        <span>...</span>
+    {% endif %}
+    {% for i in left %}
+    <li><a href="?page={{ i }}">{{ i }}</a></li>
+    {% endfor %}
+  {% endif %}
+    <li><a href="?page={{ page_obj.number }}" style="background-color: #0e84b5; color: white">{{ page_obj.number }}</a></li>
+  {% if right %}
+    {% for i in right %}
+    <li><a href="?page={{ i }}">{{ i }}</a></li>
+    {% endfor %}
+    {% if right_has_more %}
+        <span>...</span>
+    {% endif %}
+  {% endif %}
+  {% if last %}
+    <li><a href="?page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a></li>
+  {% endif %}
+
+</ul>
+{% endif %}
+
+{% endblock main %}
