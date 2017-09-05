@@ -20,4 +20,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('dw_blog.urls')),
     url(r'', include('comments.urls')),
+    url(r'', include('users.urls')),
+    url(r'^users/', include('users.urls')),
+    # 将 auth 应用中的 urls 模块包含进来
+    url(r'^users/', include('django.contrib.auth.urls')),
 ]

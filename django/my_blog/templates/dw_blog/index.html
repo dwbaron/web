@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block jsp %}
-
+{% load get_digest %}
 <script>
 
     $(function () {
@@ -28,8 +28,9 @@
 
 {% endblock jsp %}
 
-
+{% if user.is_authenticated %}
 {% block main %}
+    <p>Welcome, <span style="color:red">{{ user.username }}</span> Thanks for logging in.</p>
 {% for post in post_list %}
 <article class="post post-{{ post.pk }}">
     <h1 class="entry-title">
@@ -46,7 +47,7 @@
     </div>
 
     <div class="entry-content clearfix">
-        <p style="font-size: 1em">{{ post.body|safe|truncatechars:54}} ... </p>
+        <p style="font-size: 1em">{{ post.body|get_digest|safe}} ... </p>
         <div class="read-more cl-effect-14">
             <a href="{{ post.get_absolute_url}}" class="more-link">read more <span class="meta-nav">...</span></a>
         </div>
@@ -58,28 +59,7 @@
 <div class="no-post">暂时还没有发布的文章！</div>
 {% endfor %}
 
-<!-- 简单分页效果
-<div class="pagination-simple">
-    <a href="#">上一页</a>
-    <span class="current">第 6 页 / 共 11 页</span>
-    <a href="#">下一页</a>
-</div>
--->
-<!--<div class="pagination">-->
-                    <!--{% if post_list.has_previous %}-->
-                        <!--<a href="/home/?pindex={{ post_list.number|add:-1 }}">&lt;上一页</a>-->
-                    <!--{% endif %}-->
-                    <!--{% for pindex in pages %}-->
-                        <!--{% if pindex == post_list.number %}-->
-                            <!--<a href="/home/?pindex={{ pindex }}" class="current" style="color:red">{{ pindex }}</a>-->
-                        <!--{% else %}-->
-                            <!--<a href="/home/?pindex={{ pindex }}">{{ pindex }}</a>-->
-                        <!--{% endif %}-->
-                    <!--{% endfor %}-->
-                    <!--{% if post_list.has_next %}-->
-                        <!--<a href="/home/?pindex={{ post_list.number|add:1 }}">下一页&gt;</a>-->
-                    <!--{% endif %}-->
-                <!--</div>-->
+
 {% if is_paginated %}
 <ul class="pagination">
   {% if first %}
@@ -110,3 +90,6 @@
 {% endif %}
 
 {% endblock main %}
+{% else %}
+<div class="no-post">请先登录</div>
+{% endif %}

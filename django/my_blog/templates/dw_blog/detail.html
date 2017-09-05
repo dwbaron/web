@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block main %}
+
 <article class="post post-{{post.pk}}">
     <header class="entry-header">
         <h1 class="entry-title">{{ post.title }}</h1>
@@ -16,12 +17,14 @@
     <div class="entry-content clearfix">
         {% if img_list %}
         {% for img in img_list %}
-            <div align="center" style="margin-bottom: 40px"><img src='/media/{{img.img_url.name}}' width="50%" height="50%"/></div>
+        <div align="center" style="margin-bottom: 40px"><img src='/media/{{img.img_url.name}}' width="50%"
+                                                             height="50%"/></div>
         {% endfor %}
         {% endif %}
         {{ post.body|safe }}
     </div>
 </article>
+
 <section class="comment-area" id="comment-area">
     <hr style="height:2px;border:none;border-top:1px dotted #0e84b5">
     <h3>评论区</h3>
@@ -52,7 +55,7 @@
             {% for comment in comment_list %}
             <li class="comment-item">
                 <span class="nickname">{{ comment.name }}</span>
-                <time class="submit-date" >{{ comment.created_time }}</time>
+                <time class="submit-date">{{ comment.created_time }}</time>
                 <div class="text">
                     {{ comment.text }}
                 </div>
@@ -87,4 +90,12 @@
     </ul>
 </div>
 {% endblock toc %}
-
+{% block tags %}
+<ul>
+    {% for tag in post.tags.all %}
+    <li>
+        <a href="{% url 'blog:tag' tag.pk %}">{{ tag.name }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock tags %}

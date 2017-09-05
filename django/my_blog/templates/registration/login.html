@@ -1,0 +1,31 @@
+{% extends 'users/register.html' %}
+{% load staticfiles %}
+
+{% block main %}
+
+            <h3>
+                登陆</h3>
+            <form class="form" action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <ul>
+
+                    {% for field in form %}
+                    <li class="item">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {{ field.errors }}
+                    {% if field.help_text %}
+                    {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <button type="submit" class="btn btn-primary btn-block">登陆</button>
+            <input type="hidden" name="next" value="{{ next }}" />
+            </form>
+            <div class="flex-center top-gap text-small">
+                 <div class="unit-2-3"><span>没有账号？<a href="{% url 'users:register' %}">立即注册</a></span></div>
+                    <div class="unit-1-3 flex-right"><span><a href="reset_password.html">忘记密码？</a></span></div>
+            </div>
+
+{% endblock main %}

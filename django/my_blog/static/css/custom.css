@@ -123,7 +123,7 @@ img {
  * 3.1 - Logo
  */
 .logo{
-    height: 80px !important;
+    height: 79px !important;
     width: 220px;
 }
 .logo h1{
@@ -131,7 +131,7 @@ img {
     text-align: center;
 }
 .logo h1 a {
-    line-height: 80px;
+    line-height: 79px;
     padding: 10px;
     color: white;
 
@@ -409,12 +409,11 @@ img {
     content: '\f3d3';
     font-family: "Ionicons";
     position: absolute;
-    left: -22px;
-    top: 3px;
+    left: -24px;
     font-size: 18px;
     color: #0e84b5;
     width: 20px;
-    height: 20px;
+    height: 20px !important;
     border-radius: 50%;
     text-align: center;
     line-height: 20px;

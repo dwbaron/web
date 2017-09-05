@@ -1,17 +1,29 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
-from dw_blog.models import Post, ImageStore, Cat
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, HttpResponseRedirect
+from dw_blog.models import Post, ImageStore, Cat, Tag
 import markdown
 from comments.forms import CommentForm
 from django.core.paginator import Paginator
 # Create your views here.
 from django.views.generic import ListView, DetailView
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.core.exceptions import PermissionDenied
 
 class IndexView(ListView):
     model = Post
     template_name = 'dw_blog/index.html'
     context_object_name = 'post_list'
     paginate_by = 5
+
+
+    def get_queryset(self, *args,**kwargs):
+        name = self.request.user.username
+        if name:
+            queryset = Post.objects.filter(author__username=name)
+            if not queryset:
+                queryset = []
+        return queryset
 
     def get_context_data(self, **kwargs):
 
@@ -106,7 +118,7 @@ class IndexView(ListView):
         else:
             # 用户请求的既不是最后一页，也不是第 1 页，则需要获取当前页左右两边的连续页码号，
             # 这里只获取了当前页码前后连续两个页码，你可以更改这个数字以获取更多页码。
-            left = page_range[(page_number - 3) if (page_number - 3) > 0 else 0:page_number - 1]
+            left = page_range[(page_number - 3):page_number if (page_number - 3) > 0 else 0:page_number - 1]
             right = page_range[page_number:page_number + 2]
 
             # 是否需要显示最后一页和最后一页前的省略号
@@ -140,6 +152,7 @@ class CategoryView(ListView):
     context_object_name = 'post_list'
 
     def get_queryset(self):
+
         cate = get_object_or_404(Cat, pk=self.kwargs.get('pk'))
         return super(CategoryView, self).get_queryset().filter(category=cate)
 
@@ -150,19 +163,25 @@ class PostDetailView(DetailView):
     template_name = 'dw_blog/detail.html'
     context_object_name = 'post'
 
+
     def get(self, request, *args, **kwargs):
         # 覆写 get 方法的目的是因为每当文章被访问一次，就得将文章阅读量 +1
         # get 方法返回的是一个 HttpResponse 实例
         # 之所以需要先调用父类的 get 方法，是因为只有当 get 方法被调用后，
         # 才有 self.object 属性，其值为 Post 模型实例，即被访问的文章 post
-        response = super(PostDetailView, self).get(request, *args, **kwargs)
+        p = Post.objects.get(pk=self.kwargs['pk'])
 
-        # 将文章阅读量 +1
-        # 注意 self.object 的值就是被访问的文章 post
-        self.object.increase_views()
+        if p:
+            if p.author.username == self.request.user.username:
+                response = super(PostDetailView, self).get(request, *args, **kwargs)
+                # 将文章阅读量 +1
+                # 注意 self.object 的值就是被访问的文章 post
+                self.object.increase_views()
 
-        # 视图必须返回一个 HttpResponse 对象
-        return response
+                # 视图必须返回一个 HttpResponse 对象
+                return response
+            else:
+                raise PermissionDenied
 
     def get_object(self, queryset=None):
         # 覆写 get_object 方法的目的是因为需要对 post 的 body 值进行渲染
@@ -173,6 +192,7 @@ class PostDetailView(DetailView):
                                           'markdown.extensions.codehilite',
                                           'markdown.extensions.toc',
                                       ])
+
         return post
 
     def get_context_data(self, **kwargs):
@@ -201,9 +221,6 @@ class PostDetailView(DetailView):
             })
         return context
 
-
-def notebook(request):
-    return render(request, 'dw_blog/data_science_review.html')
 
 def index(request):
     pindex = request.GET.get('pindex') if request.GET.get('pindex') is not None else '1'
@@ -284,3 +301,13 @@ def category(request, pk):
     for p in post_list:
         p.comments = p.comment_set.count()
     return render(request, 'dw_blog/index.html', context={'post_list': post_list, 'img': img.img_url.name})
+
+
+class TagView(ListView):
+    model = Post
+    template_name = 'dw_blog/index.html'
+    context_object_name = 'post_list'
+
+    def get_queryset(self):
+        tag = get_object_or_404(Tag, pk=self.kwargs.get('pk'))
+        return super(TagView, self).get_queryset().filter(tags=tag)

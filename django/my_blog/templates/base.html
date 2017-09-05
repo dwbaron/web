@@ -29,6 +29,7 @@
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/pace.min.js' %}"></script>
     <script src="{% static 'js/modernizr.custom.js' %}"></script>
+
     <script>
 
         $(function () {
@@ -69,6 +70,16 @@
 </head>
 
 <body>
+<!--&lt;!&ndash; particles.js container &ndash;&gt;-->
+<!--<div id="particles-js"></div>-->
+<!--&lt;!&ndash; scripts &ndash;&gt;-->
+<!--<script src="{% static 'js/particles.js' %}"></script>-->
+<!--<script src="{% static 'js/app.js' %}"></script>-->
+
+<!--&lt;!&ndash; stats.js &ndash;&gt;-->
+<!--<script src="{% static 'js/lib/stats.js' %}"></script>-->
+
+
 <div class="container">
     <header id="site-header">
         <div class="row">
@@ -88,7 +99,7 @@
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav navbar-right">
                             <li class="cl-effect-11"><a href="/">Home</a></li>
-                            <li class="cl-effect-11"><a href="full-width.html">Blog</a></li>
+                            <li class="cl-effect-11"><a href="full-width.html">Gallery</a></li>
                             <li class="cl-effect-11"><a href="about.html">About</a></li>
                             <li class="cl-effect-11"><a href="contact.html">Contact</a></li>
                         </ul>
@@ -111,17 +122,18 @@
 <div class="content-body">
     <div class="container">
         <div class="row">
-            <main class="col-md-9">
+            <main class="col-md-10">
                 {% block main %}
                 {% endblock main %}
             </main>
-            <aside class="col-md-3">
+            <aside class="col-md-2" style="border-left: 1px orangered dashed;">
                 {% block toc %}
                 {% endblock toc %}
                 <div class="widget widget-recent-posts">
                     <h3 class="widget-title">NEW POSTS</h3>
-                    {% get_recent_posts as recent_post_list %}
+                    {% get_recent_posts user.username as recent_post_list %}
                     <ul>
+                    {% if user.is_authenticated %}
                         {% for post in recent_post_list %}
                         <li class="post-list">
                             <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
@@ -129,11 +141,12 @@
                         {% empty %}
                         暂无文章
                         {% endfor %}
+                    {% endif %}
                     </ul>
                 </div>
                 <div class="widget widget-archives">
                     <h3 class="widget-title">ARCHIVES</h3>
-                    {% archives as date_list %}
+                    {% archives user.username as date_list %}
                     <ul>
                         {% for date in date_list %}
                         <li>
@@ -148,53 +161,38 @@
 
                 <div class="widget widget-category">
                     <h3 class="widget-title">CATEGORIES</h3>
-                    {% get_categories as category_list %}
+                    {% get_categories user.username as category_list %}
                     <ul>
                         {% for category in category_list %}
                         <li>
                             <a href="{% url 'blog:category' category.pk %}">{{ category.name }}</a>
+                            <span class="post-count">{{ category.num_posts }}</span>
                         </li>
+                            {% empty %}
+                            暂无分类
                         {% endfor %}
+
                     </ul>
                 </div>
 
                 <div class="widget widget-tag-cloud">
                     <h3 class="widget-title">CLOUD TAGS</h3>
+                    {% block tags %}
+                    {% get_tags user.username as tag_list %}
                     <ul>
+                        {% for tag in tag_list %}
                         <li>
-                            <a href="/notebook/">Django</a>
+                            <a href="{% url 'blog:tag' tag.pk %}">{{ tag.name }}</a>
                         </li>
-                        <li>
-                            <a href="#">Python</a>
-                        </li>
-                        <li>
-                            <a href="#">Java</a>
-                        </li>
-                        <li>
-                            <a href="#">笔记</a>
-                        </li>
-                        <li>
-                            <a href="#">文档</a>
-                        </li>
-                        <li>
-                            <a href="#">AngularJS</a>
-                        </li>
-                        <li>
-                            <a href="#">CSS</a>
-                        </li>
-                        <li>
-                            <a href="#">JavaScript</a>
-                        </li>
-                        <li>
-                            <a href="#">Snippet</a>
-                        </li>
-                        <li>
-                            <a href="#">jQuery</a>
-                        </li>
+                            {% empty %}
+                            暂无标签
+                        {% endfor %}
                     </ul>
+
+                    {% endblock tags %}
                 </div>
                 <div class="rss">
-                    <a href=""><span class="ion-social-rss-outline"></span> RSS</a>
+                    <a href="{% url 'blog:rss' %}"><span class="ion-social-rss-outline"></span> RSS</a>
                 </div>
             </aside>
         </div>
@@ -205,7 +203,7 @@
         <div class="row">
             <div class="col-md-12">
                 <p class="copyright">&copy 2017 -
-                    - 来自<a href="http://www.dwbaron.com/" target="_blank">DW的博客</a>
+                    - 来自<a href="http://www.dwbaron.com/" target="_blank">DW</a>
                 </p>
             </div>
         </div>
