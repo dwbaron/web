@@ -1,17 +1,23 @@
 ### My_Blog
-- 包含后台富文本编辑器
-- 月份归档、标签
-- 评论功能
+- 更新登陆注册界面，用到了particles动态背景
+- 多用户情况下只能看到自己的博客文章
 
 ---
 ### 待完善
 - 搜索
-- 词云以及订阅
-- 账户管理
+- 账户管理，前端的文章编辑界面
 
 ---
-###home页面
-![home](pics/home.png)
+### 登陆界面
 
-###文章页面
-![detail](pics/detail.png)
+![home](pics/login.png)
+
+###home页面1
+用户ljh没有发表文章，则什么都不显示
+
+![home](pics/ljh.png)
+
+###home页面2
+用户dw发表过文章
+
+![detail](pics/dw.png)
