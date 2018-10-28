@@ -5,10 +5,8 @@ app = Flask(__name__)
 
 app.config.from_object(DevConfig)
 
-
-@app.route('/')
-def home():
-    return '<h1> Hello World </h1>'
+# Import the views module
+views = __import__('views')
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
-from flask.ext.script import Manager, Server
+from flask_script import Manager, Server
+from flask_migrate import Migrate, MigrateCommand
 import main
 import models
 
@@ -9,6 +10,9 @@ manager = Manager(main.app)
 # This command will be run the Flask development_env server
 manager.add_command("server", Server())
 
+# init migrate object via app and db object
+migrate = Migrate(main.app, models.db)
+manager.add_command("db", MigrateCommand)
 
 @manager.shell
 def make_shell_context():
